@@ -10,7 +10,9 @@ function App() {
     "강남 우동 맛집",
     "파이썬 독학",
   ]);
-  let [좋아요, 좋아요변경] = useState(0);
+  let [좋아요, 좋아요변경] = useState([0, 0, 0]);
+  let [modal, setModal] = useState(false);
+  let [index, setindex] = useState(0);
 
   return (
     <div className="App">
@@ -36,61 +38,60 @@ function App() {
         가나다 정렬
       </button>
 
-      <div className="list">
-        <h4>
-          {글제목[0]}{" "}
-          <span
-            onClick={() => {
-              좋아요변경(좋아요 + 1);
-            }}
-          >
-            👍
-          </span>{" "}
-          {좋아요}
-        </h4>
-        <p>2월 17일 발행</p>
-      </div>
+      {글제목.map(function (a, i) {
+        return (
+          <div className="list">
+            <h4
+              onClick={() => {
+                setModal(!modal);
+                setindex(i);
+              }}
+            >
+              {글제목[i]}{" "}
+              <span
+                onClick={() => {
+                  let copy = [...좋아요];
+                  copy[i] = copy[i] + 1;
+                  좋아요변경(copy);
+                }}
+              >
+                👍
+              </span>{" "}
+              {좋아요[i]}
+            </h4>
+            <p>2월 17일 발행</p>
+          </div>
+        );
+      })}
 
-      <div className="list">
-        <h4>
-          {글제목[1]}{" "}
-          <span
-            onClick={() => {
-              좋아요변경(좋아요 + 1);
-            }}
-          >
-            👍
-          </span>{" "}
-          {좋아요}
-        </h4>
-        <p>2월 17일 발행</p>
-      </div>
-
-      <div className="list">
-        <h4>
-          {글제목[2]}{" "}
-          <span
-            onClick={() => {
-              좋아요변경(좋아요 + 1);
-            }}
-          >
-            👍
-          </span>{" "}
-          {좋아요}
-        </h4>
-        <p>2월 17일 발행</p>
-      </div>
-      <Modal />
+      {modal == true ? (
+        <Modal
+          index={index}
+          setindex={setindex}
+          글제목={글제목}
+          글제목변경={글제목변경}
+          color={"skyblue"}
+        />
+      ) : null}
     </div>
   );
 }
 
-function Modal() {
+function Modal(props) {
   return (
-    <div className="modal">
-      <h4>제목</h4>
+    <div className="modal" style={{ background: props.color }}>
+      <h4>{props.글제목[props.index]}</h4>
       <p>날짜</p>
       <p>상세내용</p>
+      <button
+        onClick={() => {
+          let copy = [...props.글제목];
+          copy[0] = "여자 코트 추천";
+          props.글제목변경(copy);
+        }}
+      >
+        글수정
+      </button>
     </div>
   );
 }
